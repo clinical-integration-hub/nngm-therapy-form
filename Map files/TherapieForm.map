@@ -1,0 +1,78 @@
+/// version = 0.1
+/// title = "nNGM: Mapping Therapieform"
+/// status = draft
+map "http://uk-koeln.de/fhir/StructureMap/nNGM_Mapping_Therapie" = nNGM_Mapping_Basisangaben
+
+uses "http://hl7.org/fhir/StructureDefinition/CTS_Transport" as source
+uses "http://hl7.org/fhir/StructureDefinition/Organization" as target
+uses "http://hl7.org/fhir/StructureDefinition/Practitioner" as target
+uses "http://hl7.org/fhir/StructureDefinition/EpisodeOfCare" as target
+uses "http://hl7.org/fhir/StructureDefinition/ProcedureRequest" as target
+uses "http://hl7.org/fhir/StructureDefinition/Patient" as target
+uses "http://hl7.org/fhir/StructureDefinition/Observation" as target
+
+uses "http://hl7.org/fhir/StructureDefinition/Encounter" as target
+uses "http://hl7.org/fhir/StructureDefinition/MedicationAdministration" as target
+uses "http://hl7.org/fhir/StructureDefinition/Procedure" as target
+
+import "http://uk-koeln.de/fhir/StructureMap/nNGM_Mapping_TherapieOP"
+import "http://uk-koeln.de/fhir/StructureMap/nNGM_Mapping_TherapieSONST"
+import "http://uk-koeln.de/fhir/StructureMap/nNGM_Mapping_TherapieSTR"
+import "http://uk-koeln.de/fhir/StructureMap/nNGM_Mapping_TherapieSYST"
+
+
+group TransformBundle(source src: CTS_Transport, target bundle: Bundle)
+{
+    src -> bundle.id = uuid();
+    src -> bundle.type = 'collection';
+
+    src -> bundle.entry as entry, 
+           entry.resource = create('Patient') as patient 
+           then TransformPatient(src, patient), TransformPatientPostHandler(src, patient, bundle);
+
+    src -> bundle.entry as entry, 
+           entry.resource = create('Practitioner') as practitioner 
+           then TransformPractitioner(src, practitioner);
+
+    src -> bundle.entry as entry, 
+           entry.resource = create('Organization') as organization 
+           then TransformOrganization(src, organization);
+}
+
+//group TransfromPatientPostHandler(){}
+
+//group TransformObservationPostHandler(){}
+
+/*----------------------- Patient -----------------*/
+group TransformPatient(source src : FakeInpatientDrugChart, target patient: Patient)
+{
+  src -> patient.id = uuid();
+  src.mpi as mpi -> patient.identifier =
+    id('http://vonk.fire.ly/fhir/CodeSystem/mpi', mpi) as identifier, identifier.use = 'official';
+  src.patientName as patientName -> patient.name as humanName, humanName.text = patientName;
+  src.dateOfBirth as dateOfBirth -> patient.birthDate = dateOp(dateOfBirth);
+
+  src.contact as contact, contact.address as sourceAddress -> patient.address as targetAddress collate,
+    targetAddress.line = sourceAddress;
+  src.contact as contact, contact.email as email -> patient.telecom as telecom,
+    telecom.system = 'email', telecom.value = email;
+  src.contact as contact, contact.telephone as telephone -> patient.telecom as telecom,
+    telecom.system = 'phone', telecom.value = telephone;
+
+  src.guardian as guardian -> patient.contact = create('BackboneElement') as contact then
+  {
+    guardian.name as name -> contact.relationship =
+      cc('http://terminology.hl7.org/CodeSystem/v2-0131', 'C', 'Emergency Contact'),
+      contact.name as humanName, humanName.text = name;
+
+    guardian.email as email -> contact.telecom as telecom,
+      telecom.system = 'email', telecom.value = email;
+
+    guardian.telephone as telephone -> contact.telecom as telecom,
+      telecom.system = 'phone', telecom.value = telephone;
+  };
+
+  src.gender as gender -> patient.gender =
+    translate(gender, 'http://vonk.fire.ly/fhir/ConceptMap/MyFakePatientGender', 'code');
+}
+

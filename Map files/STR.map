@@ -1,0 +1,151 @@
+/*
+To Do:
+- Bestralungsziel -> valueset broken? remake valueset where is the source? how to access icd-o-3-t
+- How to extension of extension
+- statusReason not recognised but its cc in procedure profile
+- DatumProgress requires condition
+*/
+
+/// version = 0.1
+/// title = "nNGM: Mapping Therapieform"
+/// status = draft
+
+map "http://uk-koeln.de/fhir/StructureMap/nNGM_Mapping_TherapieSTR" = nNGM_Mapping_TherapieformSTR
+
+uses "http://hl7.org/fhir/StructureDefinition/CTS_Transport" as source 
+uses "http://hl7.org/fhir/StructureDefinition/Procedure" as target
+
+group TransformBundle(source src: CTS_Transport, target bundle: Bundle) {
+  src -> bundle.id = uuid();
+  src -> bundle.type = 'collection';
+
+
+  src -> bundle.entry as entry,
+    entry.resource = create('Procedure') as procedure
+  then TransformProcedureStrahlentherapie(src, procedure);
+}
+
+group TransformProcedureStrahlentherapie(source src: CTS_Transport, target tgt: Procedure) {
+  src -> tgt.id = uuid();
+  src -> tgt.meta as meta collate, meta.profile = 'http://uk-koeln.de/fhir/StructureDefinition/Procedure/nNGM/Strahlentherapie';
+
+  src.operations as operations, operations.data as data then {
+    //Therapiebeginn
+    data.values as values where "blockindex = 0 and groupindex = 0 and itemid = 'id_1185'"
+    then {
+      values.value as value -> tgt.performedPeriod = create('Period') as period,
+        period.start = dateOp(value);
+    };
+
+    //Therapieende
+    data.values as values where "blockindex = 0 and groupindex = 0 and itemid = 'id_1186'"
+    then {
+      values.value as value -> tgt.performedPeriod = create('Period') as period collate,
+        period.end = dateOp(value);
+    };
+
+    //DurchführendeEinrichtung
+    data.values as values where "blockindex = 0 and groupindex = 0 and itemid = 'id_1182'"
+    then {
+      values.value as durchfuehrendeEinrichtung -> tgt.performer = create('BackboneElement') as performer,
+        performer.actor as actor,
+        actor.display = durchfuehrendeEinrichtung;
+    };
+
+/*
+    //Bestrahlungsziel
+    data.values as values where "blockindex = 1 and groupindex = 0 and itemid = 'id_1181'" then
+        {
+          values.value as value -> tgt.bodysite = create('BackBoneElement') as bodysite,
+          bodysite.coding = c('http://uk-koeln.de/fhir/ValueSet/cancer-base/icdo-o-3-t', value);
+        };
+*/
+
+    //TherapeutischeIntention  
+    data.values as values where "blockindex = 1 and groupindex = 0 and itemid = 'id_1183'"
+    then {
+      values.value as therapeutischeintention -> tgt.extension as intentionop,
+        intentionop.url = 'http://uk-koeln.de/fhir/StructureDefinition/Extension/cancer-base/intention-op',
+        intentionop.value = therapeutischeintention;
+    };
+
+    //ArtDerBestrahlung
+    data.values as values where "blockindex = 1 and groupindex = 0 and itemid = 'id_1196'"
+    then {
+      values.value as art -> tgt.code = cc('http://uk-koeln.de/fhir/ValueSet/nngm/strahlentherapie-art', art);
+    };
+
+    /*
+              //Einzeldosis extension of extension
+              data.values as values where "blockindex = 1 and groupindex = 0 and itemid = 'id_1198'" then
+              {
+                //dosis
+                values.value as dosis -> tgt.extension as dosis then
+                { 
+                  //einzeldosis
+                  values.value as einzeldosis -> tgt.extension as dosis collate,
+                  dosis.extension -> tgt.extension as einzeldosis,
+                  einzeldosis.url = 'http://uk-koeln.de/fhir/StructureDefinition/Extension/cancer-base/strahlentherapie-dosis',
+                  einzeldosis.value = cast(einzeldosis, 'decimal');   
+
+                 //Gesamtdosis unit mm?
+                 data.values as values where "blockindex = 1 and groupindex = 0 and itemid = 'id_1199' and itemid = 'id_2324'.exists().not()" then
+                 {
+                   values.value as gesamtdosis -> tgt.extension as therapiedosis,
+                   therapiedosis.url = 'http://uk-koeln.de/fhir/StructureDefinition/Extension/cancer-base/strahlentherapie-dosis',
+                   therapiedosis.valueQuantity = gesamtdosis; 
+                };         
+
+               //Boost gesamt
+               data.values as values where "blockindex = 0 and groupindex = 0 and itemid = 'id_1363' and itemid = 'id_5'.exists().not()" then
+               {
+                values.value as boosted -> tgt.extension as therapiedosis,
+                therapiedosis.url = 'http://uk-koeln.de/fhir/StructureDefinition/Extension/cancer-base/strahlentherapie-dosis',
+                therapiedosis.boost as boost,
+                boost.valueBoolean = boosted;
+                };
+
+               //BoostDosis unit in mm?
+               data.values as values where "blockindex = 0 and groupindex = 0 and itemid = 'id_1364'" then
+               {
+                values.value as boostdosis -> tgt.extension as therapiedosis,
+                therapiedosis.url = 'http://uk-koeln.de/fhir/StructureDefinition/Extension/cancer-base/strahlentherapie-dosis',
+                therapiedosis.boost as boost,
+                boost.valueQuantity = boostdosis;
+               }; 
+              };
+              
+              
+          
+               //EndeDerBestrahlung not recognised
+               data.values as values where "blockindex = 2 and groupindex = 0 and itemid = 'id_1211'" then
+               {
+                values.value as edb -> tgt.statusReason = cc('http://uk-koeln.de/fhir/ValueSet/cancer-base/therapie-statusreason', edb);
+               };  	
+               
+              
+
+			         //DatumProgress     
+               data.values as values where "blockindex = 2 and groupindex = 0 and itemid = 'id_1543'" then
+               {
+                values.value as datumprogress -> tgt.onsetDateTime = dateOp(datumprogress);
+               }; 
+	           
+	      
+               //TodesDatum     
+               data.values as values where "blockindex = 2 and groupindex = 0 and itemid = 'id_1544'" then
+               {
+                values.value as todesdatum -> create('Reference') as patient,
+                patient.deceasedDate = evaluate(patientId, '\'Patient/\' + $this');
+               };
+               */
+
+    //Sontstiges --> string;     
+    data.values as values where "blockindex = 3 and groupindex = 0 and itemid = 'id_1190'"
+    then {
+      values.value as sonstiges -> tgt.note = create('BackboneElement') as note,
+        note.text = sonstiges;
+    };
+
+  };
+}
