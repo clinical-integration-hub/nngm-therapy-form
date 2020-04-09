@@ -58,7 +58,7 @@
       <mustSupport value="true" />
       <binding>
         <strength value="required" />
-        <valueSet value="https://www.uk-koeln.de/fhir/ValueSet/OpCategory" />
+        <valueSet value="http://www.uk-koeln.de/fhir/ValueSet/OpCategory" />
       </binding>
     </element>
     <element id="Procedure.category.coding">
@@ -72,7 +72,7 @@
       <mustSupport value="true" />
       <binding>
         <strength value="required" />
-        <valueSet value="https://www.uk-koeln.de/fhir/ValueSet/OpsUnk" />
+        <valueSet value="http://www.uk-koeln.de/fhir/ValueSet/OpsUnk" />
       </binding>
     </element>
     <element id="Procedure.code.coding">
@@ -151,7 +151,7 @@
       <mustSupport value="true" />
       <binding>
         <strength value="required" />
-        <valueSet value="https://www.uk-koeln.de/fhir/ValueSet/Seitenlokalisation_Typ" />
+        <valueSet value="http://www.uk-koeln.de/fhir/ValueSet/Seitenlokalisation_Typ" />
       </binding>
     </element>
     <element id="Procedure.bodySite:seitenlokalisation.coding">

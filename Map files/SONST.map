@@ -35,7 +35,7 @@ group TransformProcedureSonstigeTherapie(source src: CTS_Transport, target tgt: 
         //ArtDerTherapie -> Category 
         data.values as values where "blockindex = 0 and groupindex = 0 and itemid = 'id_1213'"
         then {
-            values.value as artdertherapie -> tgt.category = cc('https://www.uk-koeln.de/fhir/ValueSet/SonstigeTherapieCategory', artdertherapie);
+            values.value as artdertherapie -> tgt.category = cc('https://www.uk-koeln.de/fhir/ValueSet/SonstigeTherapieCategory', translate(artdertherapie, 'http://uk-koeln.de/fhir/ConceptMap/SonstigeTherapieCategory', 'code'));
         };
 
         /*

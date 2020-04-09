@@ -1,10 +1,10 @@
 /*
 To Do:
 - how to make extensions of extensions
-- how to access beurteilung
-- accessing effective[x]
-- creating references to ECOG, 
-- valueset of medicatinadministrationstatuscode valueset?
+- Beurteulung resolver from different form, which fields are relevant?
+- ECOG needs resolver
+- Observation resolver for BestesAnsprechen, Beurteilung nach
+- cast offlabel, TherapieKlinischenStudie to boolean
 */
 
 /// version = 0.1
@@ -52,7 +52,7 @@ group TransformMedicationAdministrationSystemischeTherapie(source src: CTS_Trans
       values.value as Therapieinformation -> tgt.supportingInformation = create('Reference') as supinfo collate,
         supinfo.extension as therapieInformationen,
         therapieInformationen.url = 'http://uk-koeln.de/fhir/StructureDefinition/Extension/nNGM/therapieinformationen',
-        therapieInformationen.value = Therapieinformation;
+        therapieInformationen.value = translate(Therapieinformation, 'http://uk-koeln.de/fhir/ConceptMap/nngm/JNU', 'code');
     };
 
     //TherapieinformationUmgesetzt make extension of extension to umgesetzt
@@ -62,7 +62,7 @@ group TransformMedicationAdministrationSystemischeTherapie(source src: CTS_Trans
       values.value as Therapieinformation -> tgt.supportingInformation = create('Reference') as supinfo collate,
         supinfo.extension as therapieInformationen,
         therapieInformationen.url = 'http://uk-koeln.de/fhir/StructureDefinition/Extension/nNGM/therapieinformationen',
-        therapieInformationen.value = Therapieinformation;
+        therapieInformationen.value = translate(Therapieinformation, 'http://uk-koeln.de/fhir/ConceptMap/nngm/JNU', 'code');
     };
 
     //TherapieinformationUmgesetzt make extension of extension to nichtumsetzunggrund
@@ -76,7 +76,7 @@ group TransformMedicationAdministrationSystemischeTherapie(source src: CTS_Trans
     };
 
     /*
-    //Therapiebeginn how to access effective[x]
+    //Therapiebeginn 
     data.values as values where "blockindex = 2 and groupindex = 0 and itemid = 'id_1246'" then
     {
         values.value as beginn -> tgt.effectivePeriod as effective,
@@ -89,7 +89,7 @@ group TransformMedicationAdministrationSystemischeTherapie(source src: CTS_Trans
     {
       values.value as ECOG -> create('Reference') as ecog,
       ecog.canonical = 'http://uk-koeln.de/fhir/StructureDefinition/Observation/cancer-base/ecog',
-      ecog.code = ECOG;
+      ecog.code = translate(ECOG, 'http://uk-koeln.de/fhir/ConceptMap/nngm/ecog', 'code');
     };
     
     
@@ -120,18 +120,18 @@ group TransformMedicationAdministrationSystemischeTherapie(source src: CTS_Trans
                };       
                 
 			   
-			   //TherapeutischeIntention and itemid = 'id_2324'.exists().not()
+			        /Intention
                data.values as values where "blockindex = 2 and groupindex = 0 and itemid = 'id_1243' " then
                {
                 values.value as value-> tgt.extension as intention,
                 intention.url = 'http://uk-koeln.de/fhir/StructureDefinition/Extension/cancer-base/intention-therapie',
                 intention.valueCodableConcept = cc('http://uk-koeln.de/fhir/ValueSet/cancer-base/adt/intention-therapie', value);
                
-               
-               
+  
                };        
                
-               //OffLabel  and itemid = 'id_5'.exists().not()
+               //OffLabel  Ja, Nein must be set to 1 and 0  
+          
                data.values as values where "blockindex = 2 and groupindex = 0 and itemid = 'id_2341'" then
                {
                 values.value as value -> tgt.extension as offlabel,
@@ -139,7 +139,7 @@ group TransformMedicationAdministrationSystemischeTherapie(source src: CTS_Trans
                 offlabel.valueCodableConcept = value;
                };
                
-               //TherapieKlinischenStudie
+               //TherapieKlinischenStudie cast to boolean boolean
                data.values as values where "blockindex = 1 and groupindex = 0 and itemid = 'id_2337'" then
                {
                 values.value as value -> tgt.extension as studientherapie,
@@ -170,7 +170,7 @@ group TransformMedicationAdministrationSystemischeTherapie(source src: CTS_Trans
                    rate.rateQuantity = evaluate(string, '$this.toQuantity()');
                };  
                
-                              //BestesAnsprechen    observation valueCodableConcept coding code
+              //BestesAnsprechen    observation valueCodableConcept coding code
                data.values as values where "blockindex = 5 and groupindex = 0 and itemid = 'id_1354'" then
                {
                  values.value as bestesAnsprechen -> create('Reference') as observation,

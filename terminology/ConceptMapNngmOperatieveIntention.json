@@ -1,0 +1,69 @@
+{
+    "resourceType": "ConceptMap",
+    "title": "ConceptMapOperatieveIntention",
+    "status": "draft",
+    "group": [
+      {
+        "element": [
+          {
+            "target": [
+              {
+                "equivalence": "equivalent",
+                "code": "K"
+              }
+            ],
+            "code": "Kurativ"
+          },
+          {
+            "target": [
+              {
+                "equivalence": "equivalent",
+                "code": "P"
+              }
+            ],
+            "code": "Pallitativ"
+          },
+          {
+            "target": [
+              {
+                "equivalence": "equivalent",
+                "code": "R"
+              }
+            ],
+            "code": "Revision/Komplikation"
+          },
+          {
+            "target": [
+              {
+                "equivalence": "equivalent",
+                "code": "D"
+              }
+            ],
+            "code": "Diagnostisch"
+          },
+          {
+            "target": [
+              {
+                "equivalence": "equivalent",
+                "code": "S"
+              }
+            ],
+            "code": "Sonstiges"
+          },
+          {
+            "target": [
+              {
+                "equivalence": "equivalent",
+                "code": "X"
+              }
+            ],
+            "code": "N/A"
+          }
+        ]
+      }
+    ],
+    "url": "http://uk-koeln.de/fhir/ConceptMap/nngm/intention-op",
+    "sourceCanonical": "CTSTherapyOP",
+    "targetCanonical": "http://uk-koeln.de/fhir/ValueSet/cancer-base/intention-op",
+    "name": "ConceptMap_OperatieveIntention"
+  }

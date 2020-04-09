@@ -1,0 +1,46 @@
+{
+    "resourceType": "ConceptMap",
+    "title": "Sonstige Therapie Category",
+    "status": "draft",
+    "group": [
+      {
+        "element": [
+          {
+            "target": [
+              {
+                "code": "lv",
+                "equivalence": "equivalent"
+              }
+            ],
+            "code": "lokales Verfahren"
+          },
+          {
+            "target": [
+              {
+                "code": "av",
+                "equivalence": "equivalent"
+              }
+            ],
+            "code": "anderes Verfahren"
+          },
+          {
+            "target": [
+              {
+                "code": "kt",
+                "equivalence": "equivalent"
+              }
+            ],
+            "code": "keine Therapie / Best Supportive Care"
+          }
+        ]
+      }
+    ],
+    "url": "http://uk-koeln.de/fhir/ConceptMap/SonstigeTherapieCategory",
+    "text": {
+      "status": "generated",
+      "div": "<div xmlns=\"http://www.w3.org/1999/xhtml\"><h2>Sonstige Therapie Category</h2><tt>http://uk-koeln.de/fhir/ConceptMap/SonstigeTherapieCategory</tt></div>"
+    },
+    "targetCanonical": "http://uk-koeln.de/fhir/ValueSet/SonstigeTherapieCategory",
+    "sourceCanonical": "CTSTherapySonst",
+    "name": "Sonstige_Therapie_Category"
+  }

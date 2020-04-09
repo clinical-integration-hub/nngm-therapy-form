@@ -1,22 +1,16 @@
 /*
 To Do:
-- //OperativeIntention -> conceptmap?
+- ArtDerResektion -> allow multiple values? check if thats the case
+- TodesDatum from patient (requires resolver)
 
-- //ArtDesEingriffs ->  allow multiple values? check if thats the case
-
-- //ArtDerResektion -> allow multiple values? check if thats the case
-
-- //Ektomie -> cc()    ConceptMap ops subset? 
-
-- //Todesdatum How to link patient to procedure and read patient.deceasedDate? add patient as source, add patient to transformbundle? add patient operation? what does posthandler do?
-
+- translate OPIntention, Opcategory, Ektomie
 */
 
 /// version = 0.1
 /// title = "nNGM: Mapping Therapieform"
 /// status = draft
 
-map "http://uk-koeln.de/fhir/StructureMap/nNGM_Mapping_TherapieOP" = nNGM_Mapping_TherapieformOP
+map "http://uk-koeln.de/fhir/StructureMap/nNGMMappingTherapieOP" = nNGM_Mapping_TherapieformOP
 
 uses "http://hl7.org/fhir/StructureDefinition/CTS_Transport" as source
 uses "http://hl7.org/fhir/StructureDefinition/Procedure" as target
@@ -51,15 +45,15 @@ group TransformProcedureOperation(source src: CTS_Transport, target tgt: Procedu
         };
 
 
-        //OperativeIntention -> conceptmap?
+        //OperativeIntention 
         data.values as values where "blockindex = 1 and groupindex = 0 and itemid = 'id_1167'"
         then {
             values.value as operationsmerkmale -> tgt.extension as intentionop,
                 intentionop.url = 'http://uk-koeln.de/fhir/StructureDefinition/Extension/cancer-base/intention-op',
-                intentionop.value = operationsmerkmale;
+                intentionop.valueCodableConcept = cc('http://uk-koeln.de/fhir/ValueSet/cancer-base/adt/intention-op', translate(operationsmerkmale, 'http://uk-koeln.de/fhir/ConceptMap/nngm/intention-op', 'code');
         };
 
-        //ArtDesEingriffs ->  allow multiple values?
+        //ArtDesEingriffs ->  allow multiple values, already done in cardinality
         data.values as values where "blockindex = 1 and groupindex = 0 and itemid = 'id_1168'"
         then {
             values.value as artdeseingrifs -> tgt.code = cc('http://uk-koeln.de/fhir/ValueSet/OpsUnk', artdeseingrifs);
@@ -78,25 +72,25 @@ group TransformProcedureOperation(source src: CTS_Transport, target tgt: Procedu
         data.values as values where "blockindex = 1 and groupindex = 0 and itemid = 'id_2400'"
         then {
             values.value as value -> tgt.bodySite = create('BackboneElement') as bodysite collate,
-                bodysite.coding = c('https://www.uk-koeln.de/fhir/ValueSet/Seitenlokalisation_Typ', value);
+                bodysite.coding = c('http://www.uk-koeln.de/fhir/ValueSet/Seitenlokalisation_Typ', value);
         };
 
-        //ArtDerResektion -> select multiple?, need conceptmap?
+        //ArtDerResektion -> select multiple?, check
         data.values as values where "blockindex = 1 and groupindex = 0 and itemid = 'id_1176'"
         then {
-            values.value as artderresektion -> tgt.category = cc('https://www.uk-koeln.de/fhir/ValueSet/OpCategory', artderresektion);
+            values.value as artderresektion -> tgt.category = cc('http://www.uk-koeln.de/fhir/ValueSet/OpCategory', translate(artderresektion, 'http://uk-koeln.de/fhir/ConceptMap/nngm/OpCategory', 'code');
         };
 
-        //ResektionStatus -> conceptmap?     
+        //ResektionStatus    
         data.values as values where "blockindex = 1 and groupindex = 0 and itemid = 'id_1353'"
         then {
             values.value as resektionStatus -> tgt.outcome = cc('http://uk-koeln.de/fhir/ValueSet/cancer-base/residualtumor', resektionStatus);
         };
 
-        //Ektomie -> cc()    ConceptMap ops subset?
+        //Ektomie -> 
         data.values as values where "blockindex = 1 and groupindex = 0 and itemid = 'id_1362'"
         then {
-            values.value as ektomie -> tgt.code = cc('https://www.uk-koeln.de/fhir/ValueSet/OpsUnk', ektomie);
+            values.value as ektomie -> tgt.code = cc('http://www.uk-koeln.de/fhir/ValueSet/JNU', translate(ektomie, 'http://uk-koeln.de/fhir/ConceptMap/nngm/JNU', 'code');
         };
 
         /*
