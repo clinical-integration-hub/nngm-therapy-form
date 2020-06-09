@@ -1,0 +1,129 @@
+{
+    "version": "1.1",
+    "patid": "6547",
+    "sourcesystem": "https:\/\/nngm-qat.staging.healex.systems\/",
+    "operations": [
+        {
+            "oldstatus": "not_in_house",
+            "newstatus": "editable_by_eo",
+            "operationId": "S325",
+            "type": "statechange",
+            "editor": "https:\/\/clinicalsite.org\/person\/38",
+            "timestamp": "2020-06-09T09:47:14+02:00",
+            "crfid": "SO1"
+        },
+        {
+            "oldstatus": "editable_by_eo",
+            "newstatus": "editable_by_eo",
+            "operationId": "S326",
+            "type": "statechange",
+            "editor": "https:\/\/clinicalsite.org\/person\/38",
+            "timestamp": "2020-06-09T09:47:14+02:00",
+            "crfid": "SO1"
+        },
+        {
+            "data": [
+                {
+                    "blockindex": 0,
+                    "groupindex": 0,
+                    "itemid": "id_1213",
+                    "values": [
+                        {
+                            "value": "anderes Verfahren"
+                        }
+                    ]
+                },
+                {
+                    "blockindex": 0,
+                    "groupindex": 0,
+                    "itemid": "id_1215",
+                    "values": [
+                        {
+                            "value": "Leber"
+                        }
+                    ]
+                },
+                {
+                    "blockindex": 0,
+                    "groupindex": 0,
+                    "itemid": "id_1218",
+                    "values": [
+                        {
+                            "value": "Alternative Methoden"
+                        }
+                    ]
+                },
+                {
+                    "blockindex": 0,
+                    "groupindex": 0,
+                    "itemid": "id_1219",
+                    "values": [
+                        {
+                            "value": "Bezeichnung \/ Beschreibung der alternativen Methoden:"
+                        }
+                    ]
+                },
+                {
+                    "blockindex": 0,
+                    "groupindex": 0,
+                    "itemid": "id_1220",
+                    "values": [
+                        {
+                            "value": "2020-07-07"
+                        }
+                    ]
+                },
+                {
+                    "blockindex": 0,
+                    "groupindex": 0,
+                    "itemid": "id_1221",
+                    "values": [
+                        {
+                            "value": "2020-08-08"
+                        }
+                    ]
+                },
+                {
+                    "blockindex": 0,
+                    "groupindex": 0,
+                    "itemid": "id_1472",
+                    "values": [
+                        {
+                            "value": "Bemerkungen"
+                        }
+                    ]
+                },
+                {
+                    "blockindex": 0,
+                    "groupindex": 0,
+                    "itemid": "id_2401",
+                    "values": [
+                        {
+                            "value": "2020-05-06"
+                        }
+                    ]
+                },
+                {
+                    "blockindex": 0,
+                    "groupindex": 0,
+                    "itemid": "id_2434",
+                    "values": [
+                        {
+                            "value": "Durchf\u00fchrende Einrichtung:"
+                        }
+                    ]
+                }
+            ],
+            "operationId": "D85",
+            "type": "save",
+            "editor": "https:\/\/clinicalsite.org\/person\/38",
+            "timestamp": "2020-06-09T09:47:14+02:00",
+            "crfid": "SO1"
+        }
+    ],
+    "resourceType": "nNGMv08E_https_stagi",
+    "id": "373fd59a-d874-4e6b-8bd9-70237cfd0797",
+    "meta": {
+        "lastUpdated": "2020-06-09T09:52:42+02:00"
+    }
+}
